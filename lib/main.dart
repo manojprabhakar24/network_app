@@ -1,79 +1,56 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart'as http;
 import 'dart:convert';
+
+import 'package:http/http.dart';
 void main() {
   runApp(MyApp());
 }
 
+class MyApp extends StatefulWidget {
 
 
-Future<Album> fetchAlbum()async{
-  final response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/todos/1'));
-  if (response.statusCode == 200){
-    return Album.fromJson(jsonDecode(response.body));
-  }else{
-    throw Exception("Simply Waste");
-  }
+  @override
+  _MyAppState createState() => _MyAppState();
 }
 
-class Album {
-  final int userId;
-  final int id;
-  final String title;
+class _MyAppState extends State<MyApp> {
 
-  Album({required this.userId, required this.id, required this.title});
-
-  factory Album.fromJson(Map<String, dynamic>json){
-    return Album(userId: json['userId'], id: json['id'], title: json['title']);
-  }
-}
-
-
-
-
-class MyApp extends StatefulWidget{
-  @override
-  State<MyApp> createState()=> _MyAppState();
-
+  final url="https://jsonplaceholder.typicode.com/posts";
+  var _Mydata = [];
+  void MyPost()async{
+    try {
+      final response = await get(Uri.parse(url));
+      final MyData = jsonDecode(response.body) ;
+      setState(() {
+        _Mydata=MyData;
+      });
+    }catch(err) {}
   }
 
-class _MyAppState extends State<MyApp>{
-  late Future<Album> futureAlbum;
   @override
-  void initState(){
+  void initState() {
+    // TODO: implement initState
     super.initState();
-    futureAlbum=fetchAlbum();
+    MyPost();
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Fetched Data'),
+         title: Text("Network Fetched")
         ),
-        body: Center(
-          child: FutureBuilder<Album>(
-            future: futureAlbum,
-            builder: (context,snapshot) {
-              if (snapshot.hasData) {
-                return Text(snapshot.data!.title);
-              } else if (snapshot.hasError) {
-                return Text('${snapshot.error}');
-              }
-              return const CircularProgressIndicator();
-            },
-          ),
-        ),
+        body: ListView.builder(
+            itemCount: _Mydata.length,
+            itemBuilder: (context,index){
+              final display=_Mydata[index];
+              return Text("Title:${display["title"]}\n"
+                    "Body:${display["body"]}\n");
+            }
+    ),
       ),
     );
   }
-
-
 }
-
-
-
-
-
-
 
