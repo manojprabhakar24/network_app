@@ -13,7 +13,7 @@ Future<Album> fetchAlbum() async {
   if (response.statusCode == 200) {
     return Album.fromJson(jsonDecode(response.body));
   } else {
-    throw Exception('Failed to load album');
+    throw Exception('Simply Waste - Retry');
   }
 }
 
@@ -59,7 +59,7 @@ class _MyAppState extends State<MyApp> {
 
       home: Scaffold(
         appBar: AppBar(
-          title:Text('Update Data'),
+          title:Text('Display API Data'),
         ),
         body: Center(
           child: FutureBuilder<Album>(
